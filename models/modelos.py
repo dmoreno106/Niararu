@@ -10,7 +10,7 @@ class BaseModel(Model):
         """
 
 class Autor (Model):
-    Id = AutoField()
+    Id = AutoField(primary_key=True)
     FechaNac = DateField()
     Nombre = CharField()
     Sinopsis = CharField()
@@ -19,17 +19,18 @@ class Autor (Model):
             database = db
     
 class Libro(Model):
-    IdLibro = CharField()
-    IdAutor = ForeignKeyField(Autor, related_name="libros")
+    IdLibro = CharField(primary_key=True)
     Titulo = CharField()
-    FechaNac = DateField() 
+    FechaNac = CharField() 
     Lenguaje = CharField()
     
     class Meta:
             database = db
+      
+            
 
 class Exposicion(Model):
-    IdExp =  IntegerField() 
+    IdExp =  CharField(primary_key=True) 
     Descripcion=CharField()
     Fecha=DateField()
     nombre=CharField()
@@ -46,6 +47,7 @@ class Autor_Exposicion(Model):
     
     class Meta:
             database = db 
+            primary_key=False
     
     
 class Libro_Exposicion(Model):
@@ -54,6 +56,7 @@ class Libro_Exposicion(Model):
     
     class Meta:
             database = db
+            primary_key=False
    
 
 db.connect()

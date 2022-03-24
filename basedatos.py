@@ -9,22 +9,18 @@ from datetime import date
 conexion = sqlite3.connect("Base de Datos")
 
 puntero = conexion.cursor()
-#conexion.execute("DROP TABLE LIBROS")
-conexion.execute("CREATE TABLE AUTORES (Id INTEGER PRIMARY KEY, FechaNac DATE, Nombre VARCHAR(100), Sinopsis VARCHAR2(100))")
-conexion.execute("CREATE TABLE LIBROS (IdLibro INTEGER AUTO_INCREMENT PRIMARY KEY , Titulo VARCHAR2(100), FechaNac DATE, Lenguaje VARCHAR2(100), FOREIGN KEY (IdAutor) REFERENCES AUTORES (Id))")
-conexion.execute("CREATE TABLE Exposiciones (Id INTEGER PRIMARY KEY, IdLibro INTEGER,IdAutor INTEGER,Descripcion VARCHAR2(255),Fecha DATE,FOREIGN KEY (IdAutor) REFERENCES AUTORES (Id), FOREIGN KEY (IdLibro) REFERENCES LIBROS (IdLibro))  ")
-#conexion.execute("ALTER TABLE LIBROS DROP COLUMN idAutor ")
+
 
 
 with open("autor.json") as file:
     data = json.load(file)
     
-    """for autor in data:
+    for autor in data:
         fecha = autor["fecha_de_nacimiento"]
         nombre = autor["nombre_de_persona"]
         sinopsis = autor["información_encontrada"]
         info_array = [fecha,nombre,sinopsis]
-        puntero.execute("INSERT INTO AUTORES  (FechaNac, Nombre, Sinopsis)VALUES(?,?,?)", info_array)"""
+        puntero.execute("INSERT INTO AUTORES  (FechaNac, Nombre, Sinopsis)VALUES(?,?,?)", info_array)
       
     
 
@@ -69,7 +65,7 @@ idLibrosLength=len(idLibrosTupla)
 
 
 
-for exposiciones in jsonExpos:
+"""for exposiciones in jsonExpos:
     idAutor=random.randint(1,longitudTupla)
     posicionIdLibroTupla=random.randint(1,idLibrosLength)
     idLibro=idLibrosTupla[posicionIdLibroTupla][0]
@@ -89,7 +85,7 @@ for exposiciones in jsonExpos:
     print(idLibro)
     print(descripcion)
     print(fecha)
-    print(idAutor)
+    print(idAutor)"""
 
 conexion.commit()
 """puntero.execute("SELECT * FROM AUTORES")
