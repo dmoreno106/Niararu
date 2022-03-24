@@ -1,15 +1,20 @@
+from cmath import exp
 import json
 import random
 import sqlite3
 from traceback import print_tb
 from urllib.request import urlopen
+from datetime import date
 
 conexion = sqlite3.connect("Base de Datos")
 
 puntero = conexion.cursor()
 #conexion.execute("DROP TABLE LIBROS")
-#conexion.execute("CREATE TABLE AUTORES (Id INTEGER PRIMARY KEY, FechaNac DATE, Nombre VARCHAR(100), Sinopsis VARCHAR2(100))")
-#conexion.execute("CREATE TABLE LIBROS (IdLibro INTEGER AUTO_INCREMENT PRIMARY KEY , IdAutor INTEGER, Titulo VARCHAR2(100), FechaNac DATE, Lenguaje VARCHAR2(100), FOREIGN KEY (IdAutor) REFERENCES AUTORES (Id))")
+conexion.execute("CREATE TABLE AUTORES (Id INTEGER PRIMARY KEY, FechaNac DATE, Nombre VARCHAR(100), Sinopsis VARCHAR2(100))")
+conexion.execute("CREATE TABLE LIBROS (IdLibro INTEGER AUTO_INCREMENT PRIMARY KEY , Titulo VARCHAR2(100), FechaNac DATE, Lenguaje VARCHAR2(100), FOREIGN KEY (IdAutor) REFERENCES AUTORES (Id))")
+conexion.execute("CREATE TABLE Exposiciones (Id INTEGER PRIMARY KEY, IdLibro INTEGER,IdAutor INTEGER,Descripcion VARCHAR2(255),Fecha DATE,FOREIGN KEY (IdAutor) REFERENCES AUTORES (Id), FOREIGN KEY (IdLibro) REFERENCES LIBROS (IdLibro))  ")
+#conexion.execute("ALTER TABLE LIBROS DROP COLUMN idAutor ")
+
 
 with open("autor.json") as file:
     data = json.load(file)
@@ -23,13 +28,10 @@ with open("autor.json") as file:
       
     
 
-with open("libros.json") as file:
+"""with open("libros.json") as file:
     librosData = json.load(file)
     contador=puntero.execute("Select * from AUTORES ")
    
-    
-    
-    
     
     tupla=contador.fetchall()
     longitudTupla=len(tupla)
@@ -41,8 +43,53 @@ with open("libros.json") as file:
         lenguaje=libro["lengua_publicacion"]
         idAutor=i
         info_array = [id,idAutor,titulo,fechaPublicacion,lenguaje]
-        puntero.execute("INSERT INTO LIBROS VALUES(?,?,?,?,?)", info_array)
-#print(datos.read())
+        puntero.execute("INSERT INTO LIBROS VALUES(?,?,?,?,?)", info_array)"""
+
+
+#Abrir url para extraer datos JSON para la tabla exposiciones
+exposicion = urlopen("http://nexo.carm.es/nexo/archivos/recursos/opendata/json/SalasdeExposiciones.json")
+jsonExpos = json.load(exposicion)
+
+inicio=date(2022,1,1) 
+final=date(2024,1,1)
+
+#Ejecutar consulta para extraer id de libro y de autor para la tabla exposiciones
+idAutores=puntero.execute("Select Id from AUTORES")
+contadorAutores=idAutores.fetchall()
+longitudTupla=len(contadorAutores)
+
+
+
+idLibro=puntero.execute("Select idLibro from LIBROS")
+idLibrosTupla=idLibro.fetchall()
+idLibrosLength=len(idLibrosTupla)
+
+
+
+
+
+
+for exposiciones in jsonExpos:
+    idAutor=random.randint(1,longitudTupla)
+    posicionIdLibroTupla=random.randint(1,idLibrosLength)
+    idLibro=idLibrosTupla[posicionIdLibroTupla][0]
+    id = exposiciones["Código"]
+    nombre=exposiciones["Nombre"]
+    direccion=exposiciones["Dirección"]
+    codigoPostal=exposiciones["C.P."]
+    municipio=exposiciones["Municipio"]
+  
+    
+    fecha= inicio+(final-inicio)*random.random()
+    try:
+        descripcion=exposiciones["Descripción"]
+    except:
+        descripcion=""
+
+    print(idLibro)
+    print(descripcion)
+    print(fecha)
+    print(idAutor)
 
 conexion.commit()
 """puntero.execute("SELECT * FROM AUTORES")
