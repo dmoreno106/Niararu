@@ -1,11 +1,12 @@
+from ast import And
 from datetime import date
-from lib2to3.pytree import Base
 import random
 from urllib.request import urlopen
 from peewee import *
 import json
 
 from models.modelos import Autor, Autor_Exposicion, Exposicion, Libro, Libro_Exposicion
+
 
 db = SqliteDatabase("Base de Datos")
 db.connect()
@@ -19,7 +20,7 @@ def save(dato):
         
     
 def volcarDatosAutor():
-    with open("autor.json") as file:
+    with open("datosJson/autor.json") as file:
         data = json.load(file)
         
         for autor in data:
@@ -34,7 +35,7 @@ def volcarDatosAutor():
       
       
 def volcarDatosLibros(): 
-    with open("libros.json") as file:
+    with open("datosJson/libros.json") as file:
         data2 = json.load(file)
         
         for libro in data2:
@@ -122,6 +123,7 @@ def insertarRegistro(arrayDatos,tipo):
             insertarExposicion(arrayDatos)
             
     }.get(tipo)
+    
 
 def insertarAutor(datosAutor):
     autor=Autor(
@@ -132,33 +134,75 @@ def insertarAutor(datosAutor):
     
     save(autor)
     
+    
 def insertarLibro(datosLibro):
-    libro=Libro(
-        IdLibro=datosLibro["isbn"],
-        Titulo=datosLibro["titulo"],
-        FechaPublicacion=datosLibro["fecha_publicacion"],
-        Lenguaje=datosLibro["lenguaje"]
-        
-    )
-    save(libro)
+    if(comprobarExistencia("libro",datosLibro["id"])==0):
+        libro=Libro(
+            IdLibro=datosLibro["isbn"],
+            Titulo=datosLibro["titulo"],
+            FechaPublicacion=datosLibro["fecha_publicacion"],
+            Lenguaje=datosLibro["lenguaje"]
+            
+        )
+        save(libro)
+ 
  
 def insertarExposicion(datosExpo):
-    expo=Exposicion(
-        IdExp=datosExpo["id"],
-        Descripcion=datosExpo["descripcion"],
-        Fecha=datosExpo["fecha"],
-        nombre=datosExpo["nombre"],
-        direccion=datosExpo["direccion"],
-        codigoPostal=datosExpo["cp"],
-        municipio=datosExpo["municipio"]
-    )
-    save(expo)
+    if(comprobarExistencia("exposicion",datosExpo["id"])==0):
+        expo=Exposicion(
+            IdExp=datosExpo["id"],
+            Descripcion=datosExpo["descripcion"],
+            Fecha=datosExpo["fecha"],
+            nombre=datosExpo["nombre"],
+            direccion=datosExpo["direccion"],
+            codigoPostal=datosExpo["cp"],
+            municipio=datosExpo["municipio"]
+        )
+        save(expo)
 
-def comprobarExistencia(id,tipo):
+    else:
+        print("Ya existe la Exposicion")
+    
+
+def insertarRelacion(datosRelacion):
+    
+    libEx=comprobarExistencia("libro-expo",datosRelacion["idLibro"],datosRelacion["idExpo"])
+    autorEx=comprobarExistencia("autor-expo",datosRelacion["idAutor"],datosRelacion["idExpo"])
+    
+    print (libEx)
+    print(autorEx)
+    
+    if(libEx and autorEx):
+        #updates
+        print("update libro y autor")
+    elif(libEx and not autorEx):
+        #update libEx
+        print("update libro")
+    elif(not libEx and autorEx):
+        #update autorEx
+        print("update autor")
+    else:
+        #insert
+        print("insert libro y autor")
+
+def comprobarExistencia(tipo,id,id2):
+    print(id)
+    print(id2)
     switcher={
         "exposicion":
-            Exposicion.select(Exposicion.IdExp).where(Exposicion.IdExp==id)
-            ,
+            Exposicion.select().where(Exposicion.IdExp==id).count(),
+        "autor":
+            Autor.select().where(Autor.Id==id).count(),
         "libro":
-        
-    }
+             Libro.select().where(Libro.IdLibro==id).count(),
+        "libro-expo":
+            Libro_Exposicion.select().where(Libro_Exposicion.idLibro==id and Libro_Exposicion.idExp==id2).count(),
+        "autor-expo":
+            Autor_Exposicion.select().where(Autor_Exposicion.idAutor==id and Autor_Exposicion.idExp==id2).count(),
+    }.get(tipo)
+    
+    return switcher    
+      
+    
+datosRelacion={"idLibro":"duyjvhj","idAutor":"1","idExpo":"138"}
+insertarRelacion(datosRelacion)
