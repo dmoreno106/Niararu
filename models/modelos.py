@@ -1,3 +1,4 @@
+from email import charset
 from lib2to3.pytree import Base
 from peewee import *
 
@@ -21,7 +22,7 @@ class Autor (Model):
 class Libro(Model):
     IdLibro = CharField(primary_key=True)
     Titulo = CharField()
-    FechaNac = CharField() 
+    FechaPublicacion = CharField() 
     Lenguaje = CharField()
     
     class Meta:
@@ -42,21 +43,25 @@ class Exposicion(Model):
             database = db
     
 class Autor_Exposicion(Model):
-    idAutor=ForeignKeyField(Autor,related_name="autor")
-    idExp=ForeignKeyField(Exposicion,related_name="exposicion")   
+    idAutor=CharField()
+    idExp=CharField()
     
     class Meta:
             database = db 
-            primary_key=False
+            constraints=[SQL('FOREIGN KEY(idAutor) REFERENCES Autor(Id)'),SQL('FOREIGN KEY(idExp) REFERENCES Exposicion(IdExp)')]
+            primary_key=CompositeKey('idAutor','idExp')         
     
     
 class Libro_Exposicion(Model):
-    idLibro=ForeignKeyField(Libro,related_name="libro")
-    idExp=ForeignKeyField(Exposicion,related_name="exposicion")
+    idLibro=CharField()
+    idExp=CharField()
     
     class Meta:
             database = db
-            primary_key=False
+            constraints=[SQL('FOREIGN KEY(idLibro) REFERENCES Libro(IdLibro)'),SQL('FOREIGN KEY(idExp) REFERENCES Exposicion(IdExp)')]
+            primary_key=CompositeKey('idLibro','idExp')
+            
+     
    
 
 db.connect()

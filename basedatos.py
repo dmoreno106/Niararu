@@ -21,9 +21,8 @@ with open("autor.json") as file:
         sinopsis = autor["información_encontrada"]
         info_array = [fecha,nombre,sinopsis]
         puntero.execute("INSERT INTO AUTORES  (FechaNac, Nombre, Sinopsis)VALUES(?,?,?)", info_array)
-      
-    
-
+         
+         
 """with open("libros.json") as file:
     librosData = json.load(file)
     contador=puntero.execute("Select * from AUTORES ")
