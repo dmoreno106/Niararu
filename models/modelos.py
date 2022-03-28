@@ -48,8 +48,9 @@ class Autor_Exposicion(Model):
     
     class Meta:
             database = db 
-            constraints=[SQL('FOREIGN KEY(idAutor) REFERENCES Autor(Id)'),SQL('FOREIGN KEY(idExp) REFERENCES Exposicion(IdExp)')]
+            constraints=[SQL('FOREIGN KEY(idAutor) REFERENCES Autor(Id) ON DELETE CASCADE'),SQL('FOREIGN KEY(idExp) REFERENCES Exposicion(IdExp) ON DELETE CASCADE')]
             primary_key=CompositeKey('idAutor','idExp')         
+            recursive=True
     
     
 class Libro_Exposicion(Model):
@@ -58,8 +59,9 @@ class Libro_Exposicion(Model):
     
     class Meta:
             database = db
-            constraints=[SQL('FOREIGN KEY(idLibro) REFERENCES Libro(IdLibro)'),SQL('FOREIGN KEY(idExp) REFERENCES Exposicion(IdExp)')]
+            constraints=[SQL('FOREIGN KEY(idLibro) REFERENCES Libro(IdLibro) ON DELETE CASCADE'),SQL('FOREIGN KEY(idExp) REFERENCES Exposicion(IdExp) ON DELETE CASCADE')]
             primary_key=CompositeKey('idLibro','idExp')
+            
             
      
    

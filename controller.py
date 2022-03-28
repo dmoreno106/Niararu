@@ -201,8 +201,20 @@ def comprobarExistencia(tipo,id,id2):
             Autor_Exposicion.select().where(Autor_Exposicion.idAutor==id and Autor_Exposicion.idExp==id2).count(),
     }.get(tipo)
     
-    return switcher    
-      
-    
-datosRelacion={"idLibro":"duyjvhj","idAutor":"1","idExpo":"138"}
-insertarRelacion(datosRelacion)
+    return switcher          
+
+"""datosRelacion={"idLibro":"duyjvhj","idAutor":"1","idExpo":"138"}
+insertarRelacion(datosRelacion)"""
+
+#Borrar datos
+def borrarRegistros(id,tipo):
+     switcher={
+        "exposicion":
+            Exposicion.delete_by_id(id),
+        "autor":
+            Autor.delete_by_id(id),
+        "libro":
+             Libro.delete_by_id(id),
+    }.get(tipo)
+
+volcarDatosAutor()
