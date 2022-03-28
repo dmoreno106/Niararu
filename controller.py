@@ -228,8 +228,7 @@ def borrarRegistros(id,tipo):
             Libro_Exposicion.delete_by_id(id)
 
 #borrarRegistros("7","autor")
-volcarDatosAutor()
-volcarDatosAutExp()
+
 
 def updateAutor(datosAutor):
     if(comprobarNombre("autor", datosAutor["nombre"])):
@@ -274,3 +273,77 @@ def comprobarNombre(tipo,nombre):
     }.get(tipo)
     return switcher    
 
+def buscarRegistro(tipo,nombre):
+    switcher={
+        "autor":
+            Autor.select().where(Autor.Nombre.contains(nombre)),
+        "libro":
+             Libro.select().where(Libro.Titulo.contains(nombre)),
+        "exposicion":
+            Exposicion.select().where(Exposicion.nombre.contains(nombre))
+    }.get(tipo)
+    return switcher
+
+#dato=buscarRegistro("autor","Abad")
+#for a in dato:
+#    print(a.Nombre)
+
+def buscarDatos(tipo):
+    switcher={
+        "autor":
+            Autor.select(),
+        "libro":
+             Libro.select(),
+        "exposicion":
+            Exposicion.select()
+    }.get(tipo)
+    return switcher
+
+def mostrarDatos(tipo):
+    datos=buscarDatos(tipo)
+    if(tipo=="autor"):
+        for dato in datos:
+            print(dato.Nombre)
+            print(dato.FechaNac)
+            print(dato.Sinopsis)
+            
+    elif(tipo=="libro"):
+        for dato in datos:
+            print(dato.IdLibro)
+            print(dato.Titulo)
+            print(dato.FechaPublicacion)
+            print(dato.Lenguaje)
+    else:
+        for dato in datos:
+            print(dato.nombre)
+            print(dato.Fecha)
+            print(dato.direccion)
+            print(dato.codigoPostal)
+            print(dato.municipio)
+            print(dato.Descripcion)
+
+def mostrarRegistro(tipo,nombre):
+    datos=buscarRegistro(tipo,nombre)
+    if(tipo=="autor"):
+        for dato in datos:
+            print(dato.Nombre)
+            print(dato.FechaNac)
+            print(dato.Sinopsis)
+            
+    elif(tipo=="libro"):
+        for dato in datos:
+            print(dato.IdLibro)
+            print(dato.Titulo)
+            print(dato.FechaPublicacion)
+            print(dato.Lenguaje)
+    else:
+        for dato in datos:
+            print(dato.nombre)
+            print(dato.Fecha)
+            print(dato.direccion)
+            print(dato.codigoPostal)
+            print(dato.municipio)
+            print(dato.Descripcion)
+
+#mostrarDatos("libro")
+mostrarRegistro("autor","Abad")
