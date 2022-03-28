@@ -20,8 +20,9 @@ def save(dato):
         print("Error: ",e)
         
 def update(dato):
-    try:        
-        dato.save(force_insert=True)
+    try:      
+        print("hola")  
+        dato.save()
     except Exception as e:
         print("Error: ",e)
         
@@ -227,12 +228,36 @@ def borrarRegistros(id,tipo):
             Libro.delete_by_id(id)
             Libro_Exposicion.delete_by_id(id)
 
-#borrarRegistros("7","autor")
 
+
+def actualizaRegistro(arrayDatos,tipo):
+    
+    if(tipo=="autor"):
+        updateAutor(arrayDatos)
+    elif(tipo=="libro"):
+        updateLibro(arrayDatos)
+    elif(tipo=="exposicion"):
+        updateExposicion(arrayDatos)
+    # switcher={
+    #     "autor":
+    #         #updateAutor(arrayDatos)
+    #        updateAutor(arrayDatos)
+    #         ,
+    #     "libro":
+    #         #updateLibro(arrayDatos)
+    #         updateLibro(arrayDatos)
+    #         ,
+    #     "exposicion":
+    #         updateExposicion(arrayDatos)
+            
+    # }.get(tipo)
+    
 
 def updateAutor(datosAutor):
-    if(comprobarNombre("autor", datosAutor["nombre"])):
+    print(comprobarNombre("autor", datosAutor["nombre"],datosAutor['id']))
+    if(comprobarNombre("autor", datosAutor["nombre"],datosAutor['id'])==0):
         autor=Autor(
+            Id=datosAutor["id"],
             FechaNac=datosAutor["fecha_nac"],
             Nombre=datosAutor["nombre"],
             Sinopsis=datosAutor["sinopsis"]
@@ -240,8 +265,9 @@ def updateAutor(datosAutor):
         
         update(autor)
     
+    
 def updateLibro(datosLibro):
-    if(comprobarNombre("libro",datosLibro["titulo"])==0):
+    if(comprobarNombre("libro",datosLibro["titulo"],datosLibro['isbn'])==0):
         libro=Libro(
             IdLibro=datosLibro["isbn"],
             Titulo=datosLibro["titulo"],
@@ -264,13 +290,14 @@ def updateExposicion(datosExpo):
     update(expo)
     
     
-def comprobarNombre(tipo,nombre):
+def comprobarNombre(tipo,nombre,id):
     switcher={
         "autor":
-            Autor.select().where(Autor.Nombre==nombre).count(),
+           Autor.select().where((Autor.Id!=id and Autor.Nombre==nombre)).count(),
         "libro":
-             Libro.select().where(Libro.Titulo==nombre).count(),
+             Libro.select().where(Libro.Titulo==nombre and Libro.IdLibro!=id).count(),
     }.get(tipo)
+    
     return switcher    
 
 def buscarRegistro(tipo,nombre):
@@ -302,28 +329,24 @@ def buscarDatos(tipo):
 def mostrarDatos(tipo):
     datos=buscarDatos(tipo)
     if(tipo=="autor"):
+        autores=[]
         for dato in datos:
-            autor=[]
-            autor["nombre"]=dato.Nombre
-            autor["fecha_nacimiento"]=dato.FechaNac
-            autor["sinopsis"]=dato.Sinopsis
+            autores.append(dato.__dict__())
             
-            return autor            
+        return autores            
             
     elif(tipo=="libro"):
+        libros=[]
         for dato in datos:
-            print(dato.IdLibro)
-            print(dato.Titulo)
-            print(dato.FechaPublicacion)
-            print(dato.Lenguaje)
+            libros.append(dato.__dict__())
+            
+        return libros  
     else:
+        exposiciones=[]
         for dato in datos:
-            print(dato.nombre)
-            print(dato.Fecha)
-            print(dato.direccion)
-            print(dato.codigoPostal)
-            print(dato.municipio)
-            print(dato.Descripcion)
+            exposiciones.append(dato.__dict__())
+            
+        return exposiciones  
 
 def mostrarRegistro(tipo,nombre):
     datos=buscarRegistro(tipo,nombre)

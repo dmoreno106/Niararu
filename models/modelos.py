@@ -16,14 +16,32 @@ class Autor (Model):
     Nombre = CharField()
     Sinopsis = CharField()
     
+    def __dict__(self):
+        return {
+            "id": self.Id,
+            "FechaNac": self.FechaNac,
+            "Nombre" : self.Nombre,
+            "Sinopsis" : self.Sinopsis
+        }
+    
     class Meta:
             database = db
+            
+    
     
 class Libro(Model):
     IdLibro = CharField(primary_key=True)
     Titulo = CharField()
     FechaPublicacion = CharField() 
     Lenguaje = CharField()
+    
+    def __dict__(self):
+        return {
+            "id": self.IdLibro,
+            "Titulo": self.Titulo,
+            "FechaPublicacion" : self.FechaPublicacion,
+            "Lenguaje" : self.Lenguaje
+        }
     
     class Meta:
             database = db
@@ -38,6 +56,17 @@ class Exposicion(Model):
     direccion=CharField()
     codigoPostal=IntegerField()
     municipio=CharField()
+    
+    def __dict__(self):
+        return {
+            "Id": self.IdExp,
+            "Descripcion": self.Descripcion,
+            "Fecha" : self.Fecha,
+            "Nombre" : self.nombre,
+            "Direccion": self.direccion,
+            "Descripcion": self.Descripcion,
+            "Municipio" : self.municipio
+        }
     
     class Meta:
             database = db
