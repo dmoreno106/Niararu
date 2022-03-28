@@ -303,9 +303,12 @@ def mostrarDatos(tipo):
     datos=buscarDatos(tipo)
     if(tipo=="autor"):
         for dato in datos:
-            print(dato.Nombre)
-            print(dato.FechaNac)
-            print(dato.Sinopsis)
+            autor=[]
+            autor["nombre"]=dato.Nombre
+            autor["fecha_nacimiento"]=dato.FechaNac
+            autor["sinopsis"]=dato.Sinopsis
+            
+            return autor            
             
     elif(tipo=="libro"):
         for dato in datos:
