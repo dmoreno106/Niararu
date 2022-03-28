@@ -2,6 +2,7 @@ from ast import And
 from datetime import date
 import random
 from urllib.request import urlopen
+from paramiko import AutoAddPolicy
 from peewee import *
 import json
 
@@ -16,7 +17,13 @@ def save(dato):
     try:        
         dato.save(force_insert=True)
     except Exception as e:
-        print(e)
+        print("Error: ",e)
+        
+def update(dato):
+    try:        
+        dato.save(force_insert=True)
+    except Exception as e:
+        print("Error: ",e)
         
     
 def volcarDatosAutor():
@@ -191,6 +198,7 @@ def comprobarExistencia(tipo,id,id2):
     switcher={
         "exposicion":
             Exposicion.select().where(Exposicion.IdExp==id).count(),
+            
         "autor":
             Autor.select().where(Autor.Id==id).count(),
         "libro":
@@ -208,13 +216,61 @@ insertarRelacion(datosRelacion)"""
 
 #Borrar datos
 def borrarRegistros(id,tipo):
-     switcher={
-        "exposicion":
-            Exposicion.delete_by_id(id),
-        "autor":
-            Autor.delete_by_id(id),
-        "libro":
-             Libro.delete_by_id(id),
-    }.get(tipo)
+     
+    if tipo=="exposicion":
+            Exposicion.delete_by_id(id)
+            print(Autor_Exposicion.select(Autor_Exposicion.idExp).where(Autor_Exposicion.idExp==id))
+    elif tipo=="autor":
+            Autor.delete_by_id(id)
+            Autor_Exposicion.delete_by_id(id)
+    elif tipo=="libro":
+            Libro.delete_by_id(id)
+            Libro_Exposicion.delete_by_id(id)
 
+#borrarRegistros("7","autor")
 volcarDatosAutor()
+volcarDatosAutExp()
+
+def updateAutor(datosAutor):
+    if(comprobarNombre("autor", datosAutor["nombre"])):
+        autor=Autor(
+            FechaNac=datosAutor["fecha_nac"],
+            Nombre=datosAutor["nombre"],
+            Sinopsis=datosAutor["sinopsis"]
+        )
+        
+        update(autor)
+    
+def updateLibro(datosLibro):
+    if(comprobarNombre("libro",datosLibro["titulo"])==0):
+        libro=Libro(
+            IdLibro=datosLibro["isbn"],
+            Titulo=datosLibro["titulo"],
+            FechaPublicacion=datosLibro["fecha_publicacion"],
+            Lenguaje=datosLibro["lenguaje"]
+            
+        )
+        update(libro)
+        
+def updateExposicion(datosExpo):
+    expo=Exposicion(
+        IdExp=datosExpo["id"],
+        Descripcion=datosExpo["descripcion"],
+        Fecha=datosExpo["fecha"],
+        nombre=datosExpo["nombre"],
+        direccion=datosExpo["direccion"],
+        codigoPostal=datosExpo["cp"],
+        municipio=datosExpo["municipio"]
+    )
+    update(expo)
+    
+    
+def comprobarNombre(tipo,nombre):
+    switcher={
+        "autor":
+            Autor.select().where(Autor.Nombre==nombre).count(),
+        "libro":
+             Libro.select().where(Libro.Titulo==nombre).count(),
+    }.get(tipo)
+    return switcher    
+

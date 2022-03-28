@@ -2,7 +2,7 @@ from email import charset
 from lib2to3.pytree import Base
 from peewee import *
 
-db = SqliteDatabase("Base de Datos")
+db = SqliteDatabase("Base de Datos", pragmas={'foreign_keys': 1})
 
 """
 class BaseModel(Model):
@@ -67,4 +67,4 @@ class Libro_Exposicion(Model):
    
 
 db.connect()
-db.create_tables([Autor,Libro,Exposicion,Autor_Exposicion,Libro_Exposicion])   
+db.create_tables([Autor,Libro,Exposicion,Autor_Exposicion,Libro_Exposicion])
