@@ -1,0 +1,51 @@
+[
+    {
+      "id_BNE": "XX1366951",
+      "fecha_de_nacimiento": "1833",
+      "fecha_de_fallecimiento": "1912",
+      "nombre_de_persona": "\"\"\"\"\"\"\"Rodríguez Martínez, Antonio, \"\"\"\"\"\"\"\"Tío de la Tiza\"\"\"\"\"\"\"\"  (1833-1912)\"\"\"\"\"\"\"",
+      "término_no_aceptado": "El Tío de la Tiza (1833-1912)  // Tío de la Tiza (1833-1912)  //",
+      "fuente_de_información": "Antonio Rodriguez, el Tío de la Tiza, 1980 //",
+      "información_encontrada": "p. 13 (nacido en 1833 en Conil de la Frontera) //",
+      "obras_relacionadas": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A1366951",
+      "obras_catálogo_autor_BNE": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A1366951{AUTORBNE}"
+    },
+    {
+      "id_BNE": "XX4795147",
+      "otros_códigos_de_identificación": "viaf: http://viaf.org/viaf/169360021 ** wikidata: https://www.wikidata.org/wiki/Q378509 **",
+      "fecha_de_nacimiento": "1881",
+      "fecha_de_fallecimiento": "1936",
+      "nombre_de_persona": "Abad Conde, Gerardo  (1881-1936)",
+      "fuente_de_información": "Institutos Náuticos Oficiales, 1920 // WWW Diccionario de catedráticos españoles de Derecho (1847-1943), 12-11-2014 // Fondo fotográfico del fotógrafo Lionel Dalon //",
+      "información_encontrada": "port. (Gerardo Abad Conde) // (Abad Conde, Gerardo: n. en 1881 en Órdenes (La Coruña), m. en 1936 en Madrid, catedrático de Filosofía del Derecho en la Universidad de La Laguna) // GC-CAJA/124/4/1/20 (Fotografía de Gerardo Abad Conde junto a Niceto Alcalá Zamora, Alexandre Lerroux, Dr. Cárceles, Comandante Diego Martínez Bartio, etc. ) //",
+      "enlace_a_fuente": "http://portal.uc3m.es/portal/page/portal/instituto_figuerola/p rogramas/phu/diccionariodecatedraticos/lcatedraticos/aconde **",
+      "obras_relacionadas": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A4795147",
+      "obras_catálogo_autor_BNE": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A4795147{AUTORBNE}"
+    },
+    {
+      "id_BNE": "XX1508189",
+      "otros_códigos_de_identificación": "viaf: http://viaf.org/viaf/98857942 ** wikidata: https://www.wikidata.org/wiki/Q5647452 ** isni: http://www.isni.org/isni/0000000069897208 **",
+      "fecha_de_nacimiento": "1845",
+      "fecha_de_fallecimiento": "1912",
+      "nombre_de_persona": "Abad, José Ramón  (1845-1912)",
+      "fuente_de_información": "WWW ABEPI, 28-4-2015 //",
+      "información_encontrada": "(Abad, Josep Ramon: n. en 1845 en Cataluña y m. en 1911 en Santo Domingo (República Dominicana), periodista y político) //",
+      "obras_relacionadas": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A1508189",
+      "obras_catálogo_autor_BNE": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A1508189{AUTORBNE}"
+    },
+    {
+      "id_BNE": "XX1171071",
+      "otros_códigos_de_identificación": "viaf: http://viaf.org/viaf/1148449877015692923 **",
+      "fecha_de_nacimiento": "1873",
+      "fecha_de_fallecimiento": "1934",
+      "nombre_de_persona": "Abadal, José  (1873-1934)",
+      "campo_de_actividad": "Farmacia //",
+      "ocupación": "Militares // Farmacéuticos //",
+      "género": "Masculino",
+      "término_no_aceptado": "Abadal Sibila, José (1873-1934)  //",
+      "fuente_de_información": "Cultivo y aplicaciones de la Soja, 1933 // WWW Real Academia de Farmacia, Biblioteca Digital, 16-12-2016 //",
+      "información_encontrada": "port. (Dr. D. José Abadal, farmaceútico militar) // (Abadal Sibila, José, 1873-1934) //",
+      "obras_relacionadas": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A1171071",
+      "obras_catálogo_autor_BNE": "http://catalogo.bne.es/uhtbin/cgisirsi/0/x/0/05?searchdata1=^A1171071{AUTORBNE}"
+    }
+]
