@@ -49,22 +49,122 @@ def editarRegistro():
     # return "Editado con éxito"
     
      if request.method == 'POST':
-        id=request.args.get('id')
         tipo=request.args.get('tipo')
-        fechaNac = request.form.get('fNac')
-        nombre = request.form.get('nombre')
-        sinopsis = request.form.get('sinopsis')
+        if(tipo=="autor"):
+             
+         
+            id=request.args.get('id')
+            fechaNac = request.form.get('fNac')
+            nombre = request.form.get('nombre')
+            sinopsis = request.form.get('sinopsis')
         
-        datosArray={
+            datosArray={
                     "id":id,
                     "fecha_nac":fechaNac,
                     "nombre":nombre,
                     "sinopsis":sinopsis
                     }
+        elif(tipo=="libro"):
+            IdLibro = request.args.get('id')
+            Titulo = request.form.get('titulo')
+            FechaPublicacion = request.form.get('fecha_publicacion')
+            Lenguaje = request.form.get('lenguaje')
+            
+            datosArray={
+                    "isbn":IdLibro,
+                    "titulo":Titulo,
+                    "fecha_publicacion":FechaPublicacion,
+                    "lenguaje":Lenguaje
+                    }
+        else:
+            IdExp = request.args.get('id')
+            Descripcion=request.form.get('descripcion')
+            Fecha=request.form.get('fecha')
+            nombreExp=request.form.get('nombre')
+            direccion=request.form.get('direccion')
+            codigoPostal=request.form.get('cp')
+            municipio=request.form.get('municipio')
+            
+            datosArray={
+                    "id":IdExp,
+                    "descripcion":Descripcion,
+                    "fecha":Fecha,
+                    "nombre":nombreExp,
+                    "direccion":direccion,
+                    "cp":codigoPostal,
+                    "municipio":municipio
+                    }
+                
         controller.actualizaRegistro(datosArray,tipo)
 
         # otherwise handle the GET request
      return '''
+            <form method="POST">
+                <div><label>fecha: <input type="date" name="fecha"></label></div>
+                <div><label>nombre: <input type="text" name="nombre"></label></div>
+                <div><label>sinopsis: <input type="text" name="cp"></label></div>
+                
+                <input type="submit" value="Submit">
+            </form>'''
+
+
+@app.route('/insertarRegistro',methods=['GET','POST'])
+def insertaRegistro():
+    tipo=request.args.get('tipo')
+    if request.method == 'POST':
+        
+        if(tipo=="autor"):
+             
+         
+            
+            fechaNac = request.form.get('fNac')
+            nombre = request.form.get('nombre')
+            sinopsis = request.form.get('sinopsis')
+        
+            datosArray={
+                    "fecha_nac":fechaNac,
+                    "nombre":nombre,
+                    "sinopsis":sinopsis
+                    }
+        elif(tipo=="libro"):
+            IdLibro = request.args.get('id')
+            Titulo = request.form.get('titulo')
+            FechaPublicacion = request.form.get('fecha_publicacion')
+            Lenguaje = request.form.get('lenguaje')
+            
+            datosArray={
+                    "isbn":IdLibro,
+                    "titulo":Titulo,
+                    "fecha_publicacion":FechaPublicacion,
+                    "lenguaje":Lenguaje
+                    }
+        else:
+            IdExp = request.args.get('id')
+            Descripcion=request.form.get('descripcion')
+            Fecha=request.form.get('fecha')
+            nombreExp=request.form.get('nombre')
+            direccion=request.form.get('direccion')
+            codigoPostal=request.form.get('cp')
+            municipio=request.form.get('municipio')
+            
+            datosArray={
+                    "id":IdExp,
+                    "descripcion":Descripcion,
+                    "fecha":Fecha,
+                    "nombre":nombreExp,
+                    "direccion":direccion,
+                    "cp":codigoPostal,
+                    "municipio":municipio
+                    }
+
+        if (tipo=="autor") :
+        #return "Insertado con éxito"
+            controller.insertarRegistro(datosArray,tipo)
+        else:
+            if controller.comprobarExistencia(datosArray['id'])==0:
+                controller.insertarRegistro(datosArray,tipo)
+
+    return '''
             <form method="POST">
                 <div><label>fecha: <input type="date" name="fNac"></label></div>
                 <div><label>nombre: <input type="text" name="nombre"></label></div>
@@ -72,17 +172,7 @@ def editarRegistro():
                 
                 <input type="submit" value="Submit">
             </form>'''
-
-
-@app.route('/insertaRegistro',methods=['POST'])
-def insertaRegistro():
-    tipo=request.args.get('tipo')
-    datos=request.args.get('datos')
-    controller.insertarRegistro(datos,tipo)
-    if controller.comprobarExistencia(datos['id'])==0 :
-        return "Insertado con éxito"
-    else:
-        return "Error de inserción"
+    
 
 if __name__ == '__main__':
     # run app in debug mode on port 5000

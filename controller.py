@@ -120,17 +120,16 @@ def volcarDatosAutExp():
         
         
 def insertarRegistro(arrayDatos,tipo):
-    switcher={
-        "autor":
+    
+        if tipo=="autor":
             insertarAutor(arrayDatos)
-            ,
-        "libro":
+            
+        elif tipo=="libro":
             insertarLibro(arrayDatos)
-            ,
-        "exposicion":
+            
+        else:
             insertarExposicion(arrayDatos)
             
-    }.get(tipo)
     
 
 def insertarAutor(datosAutor):
@@ -254,26 +253,21 @@ def actualizaRegistro(arrayDatos,tipo):
     
 
 def updateAutor(datosAutor):
-    print(comprobarNombre("autor", datosAutor["nombre"],datosAutor['id']))
-    if(comprobarNombre("autor", datosAutor["nombre"],datosAutor['id'])==0):
-        autor=Autor(
-            Id=datosAutor["id"],
-            FechaNac=datosAutor["fecha_nac"],
-            Nombre=datosAutor["nombre"],
-            Sinopsis=datosAutor["sinopsis"]
-        )
-        
-        update(autor)
+    autor=Autor(
+        Id=datosAutor["id"],
+        FechaNac=datosAutor["fecha_nac"],
+        Nombre=datosAutor["nombre"],
+        Sinopsis=datosAutor["sinopsis"]
+    )
+    update(autor)
     
     
 def updateLibro(datosLibro):
-    if(comprobarNombre("libro",datosLibro["titulo"],datosLibro['isbn'])==0):
         libro=Libro(
             IdLibro=datosLibro["isbn"],
             Titulo=datosLibro["titulo"],
             FechaPublicacion=datosLibro["fecha_publicacion"],
-            Lenguaje=datosLibro["lenguaje"]
-            
+            Lenguaje=datosLibro["lenguaje"] 
         )
         update(libro)
         
@@ -288,18 +282,7 @@ def updateExposicion(datosExpo):
         municipio=datosExpo["municipio"]
     )
     update(expo)
-    
-    
-def comprobarNombre(tipo,nombre,id):
-    switcher={
-        "autor":
-           Autor.select().where((Autor.Id!=id and Autor.Nombre==nombre)).count(),
-        "libro":
-             Libro.select().where(Libro.Titulo==nombre and Libro.IdLibro!=id).count(),
-    }.get(tipo)
-    
-    return switcher    
-
+      
 def buscarRegistro(tipo,nombre):
     switcher={
         "autor":
@@ -351,25 +334,22 @@ def mostrarDatos(tipo):
 def mostrarRegistro(tipo,nombre):
     datos=buscarRegistro(tipo,nombre)
     if(tipo=="autor"):
+        autores=[]
         for dato in datos:
-            print(dato.Nombre)
-            print(dato.FechaNac)
-            print(dato.Sinopsis)
+            autores.append(dato.__dict__())
+        return autores
             
     elif(tipo=="libro"):
-        for dato in datos:
-            print(dato.IdLibro)
-            print(dato.Titulo)
-            print(dato.FechaPublicacion)
-            print(dato.Lenguaje)
+            libros=[]
+            for dato in datos:
+                libros.append(dato.__dict__())
+            return libros  
     else:
+        exposiciones=[]
         for dato in datos:
-            print(dato.nombre)
-            print(dato.Fecha)
-            print(dato.direccion)
-            print(dato.codigoPostal)
-            print(dato.municipio)
-            print(dato.Descripcion)
+            exposiciones.append(dato.__dict__())
+            
+        return exposiciones 
 
 #mostrarDatos("libro")
 mostrarRegistro("autor","Abad")
