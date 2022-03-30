@@ -209,10 +209,10 @@ def comprobarExistencia(tipo,id,id2=0):
             switcher=Autor.select().where(Autor.Id==id).count()
     elif tipo=="libro":
              switcher=Libro.select().where(Libro.IdLibro==id).count()
-    elif tipo=="libro-expo":
-             switcher=Libro_Exposicion.select().where((Libro_Exposicion.idLibro==id) & (Libro_Exposicion.idExp==id2)).count()
-    elif tipo=="autor-expo":
-            switcher=Autor_Exposicion.select().where((Autor_Exposicion.idAutor==id) & (Autor_Exposicion.idExp==id2)).count()
+    #elif tipo=="libro-expo":
+    #         switcher=Libro_Exposicion.select().where((Libro_Exposicion.idLibro==id) & (Libro_Exposicion.idExp==id2)).count()
+    #elif tipo=="autor-expo":
+    #       switcher=Autor_Exposicion.select().where((Autor_Exposicion.idAutor==id) & (Autor_Exposicion.idExp==id2)).count()
 
     
     return switcher          
@@ -227,11 +227,26 @@ def borrarRegistros(id,tipo):
             Autor_Exposicion.delete().where(Autor_Exposicion.idExp==id)
             Libro_Exposicion.delete().where(Libro_Exposicion.idExp==id)
     elif tipo=="autor":
+            exposicionRelacionada=Autor_Exposicion.select(Autor_Exposicion.idExp).where(Autor_Exposicion.idAutor==id)
+            
+            for expo in exposicionRelacionada:
+              resultado=expo.idExp
+              Libro_Exposicion.delete().where(Libro_Exposicion.idExp==resultado).execute()
+              
             Autor.delete_by_id(id)
             Autor_Exposicion.delete().where(Autor_Exposicion.idAutor==id)
+            
     elif tipo=="libro":
+            exposicionRelacionada=Libro_Exposicion.select(Libro_Exposicion.idExp).where(Libro_Exposicion.idLibro==id)
+
+            for expo in exposicionRelacionada:
+              resultado=expo.idExp
+              Autor_Exposicion.delete().where(Autor_Exposicion.idExp==resultado).execute()
+
             Libro.delete_by_id(id)
             Libro_Exposicion.delete().where(Libro_Exposicion.idLibro==id)
+           
+            
 
 
 #Función que realiza la actualización de registros por tipo
@@ -356,13 +371,23 @@ def mostrarRegistro(tipo,nombre):
         return exposiciones 
 
 def nuevasOrganizaciones():
-    newOrg=Exposicion.select().where(Exposicion.IdExp.not_in(Autor_Exposicion.select(Autor_Exposicion.idExp)))
-
+    newOrg=Exposicion.select().where((Exposicion.IdExp.not_in(Autor_Exposicion.select(Autor_Exposicion.idExp)))&(Exposicion.IdExp.not_in(Libro_Exposicion.select(Libro_Exposicion.idExp))))
+    
     exposiciones=[]
     for dato in newOrg:
-        exposiciones.append(dato.__dict__())
         
+        exposiciones.append(dato.__dict__())
+    
     return exposiciones   
 
-    
+def llenarBDD():
+    volcarDatosAutor()
+    volcarDatosLibros()
+    volcarDatosExposiciones()
+    volcarDatosAutExp()
+    volcarDatosLibExp()
+
+
+
+
 

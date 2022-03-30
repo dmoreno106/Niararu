@@ -38,12 +38,12 @@ def buscarRegistro():
 #Ruta que realiza la consulta y borra un registro
 #del tipo que se haya seleccionado por su id
 
-@app.route('/borrarRegistro',methods=['GET','POST'])
+@app.route('/borrarRegistro',methods=['GET'])
 def borrarRegistro():
     tipo=request.args.get('tipo')
     id=request.args.get('id')
     controller.borrarRegistros(id,tipo)
-    if controller.comprobarExistencia()==0 :
+    if controller.comprobarExistencia(tipo,id)==0 :
         return "Borrado con éxito"
     else:
         return "Error de borrado"
@@ -104,7 +104,7 @@ def editarRegistro():
 
         # otherwise handle the GET request
      return '''
-                sdsd
+                Editado con exito
             '''
 
 #Ruta que realiza la consulta e inserta un registro
@@ -139,7 +139,7 @@ def insertaRegistro():
                     "lenguaje":Lenguaje
                     }
         else:
-            IdExp = request.args.get('id')
+            IdExp = request.form.get('id')
             Descripcion=request.form.get('descripcion')
             Fecha=request.form.get('fecha')
             nombreExp=request.form.get('nombre')
@@ -161,11 +161,11 @@ def insertaRegistro():
         
             controller.insertarRegistro(datosArray,tipo)
         else:
-            if controller.comprobarExistencia(datosArray['id'])==0:
+            if controller.comprobarExistencia(tipo,datosArray['id'])==0:
                 controller.insertarRegistro(datosArray,tipo)
 
     return '''
-                ff
+                Insertado con exito
             '''
     
 @app.route('/insertarExposicionOrganizada',methods=['GET','POST'])
@@ -187,8 +187,12 @@ def insertarRelacion():
 @app.route('/organizar',methods=['GET','POST'])
 def organizar():
     nuevasOrganizaciones=controller.nuevasOrganizaciones()
-    datosJson=json.JSONEncoder().encode(nuevasOrganizaciones) 
-    return Response(datosJson,mimetype='application/json')
+    
+        
+    datosJson=json.JSONEncoder().encode(nuevasOrganizaciones)
+     
+    return datosJson
+
 if __name__ == '__main__':
     # run app in debug mode on port 5001
     app.run(debug=True, port=5001)
