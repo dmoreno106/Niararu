@@ -9,6 +9,8 @@ from flask import *
 app = Flask(__name__)
 
 
+#Ruta que realiza una consulta y muestra todos los datos
+#de un tipo en formato JSON
 
 @app.route('/mostrarDatos',methods=['GET','POST'])
 def sacarDatos():
@@ -17,6 +19,10 @@ def sacarDatos():
     datos1=json.JSONEncoder().encode(datos) 
     
     return Response(datos1,mimetype='application/json')
+
+#Ruta que realiza la consulta y muestra los datos
+#del tipo escogido filtrando por el nombre en el caso de autor y exposicion
+#y título en el caso de libro
 
 @app.route('/buscarRegistro',methods=['POST'])
 def buscarRegistro():
@@ -29,6 +35,8 @@ def buscarRegistro():
 
 
 
+#Ruta que realiza la consulta y borra un registro
+#del tipo que se haya seleccionado por su id
 
 @app.route('/borrarRegistro',methods=['GET','POST'])
 def borrarRegistro():
@@ -40,13 +48,10 @@ def borrarRegistro():
     else:
         return "Error de borrado"
 
+#Ruta que realiza la consulta y edita un registro
 
 @app.route('/editarRegistro',methods=['GET','POST'])
 def editarRegistro():
-    
-     
-    # controller.actualizaRegistro(id,tipo)
-    # return "Editado con éxito"
     
      if request.method == 'POST':
         tipo=request.args.get('tipo')
@@ -107,7 +112,7 @@ def editarRegistro():
                 <input type="submit" value="Submit">
             </form>'''
 
-
+#Ruta que realiza la consulta e inserta un registro
 @app.route('/insertarRegistro',methods=['GET','POST'])
 def insertaRegistro():
     tipo=request.args.get('tipo')
@@ -158,7 +163,7 @@ def insertaRegistro():
                     }
 
         if (tipo=="autor") :
-        #return "Insertado con éxito"
+        
             controller.insertarRegistro(datosArray,tipo)
         else:
             if controller.comprobarExistencia(datosArray['id'])==0:
@@ -175,6 +180,6 @@ def insertaRegistro():
     
 
 if __name__ == '__main__':
-    # run app in debug mode on port 5000
+    # run app in debug mode on port 5001
     app.run(debug=True, port=5001)
     

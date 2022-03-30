@@ -2,13 +2,11 @@ from email import charset
 from lib2to3.pytree import Base
 from peewee import *
 
+#definir base de datos con sqlite
 db = SqliteDatabase("Base de Datos", pragmas={'foreign_keys': 1})
 
-"""
-class BaseModel(Model):
-    class Meta:
-        db = db
-        """
+
+#Creación de tablas mediante clases
 
 class Autor (Model):
     Id = AutoField(primary_key=True)
@@ -94,6 +92,8 @@ class Libro_Exposicion(Model):
             
      
    
-
+#conexión con la base de datos
 db.connect()
+
+#función para crear las tablas con las clases establecidas anteriormente
 db.create_tables([Autor,Libro,Exposicion,Autor_Exposicion,Libro_Exposicion])
