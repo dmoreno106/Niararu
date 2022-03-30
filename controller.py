@@ -23,7 +23,7 @@ def save(dato):
 #Función para actualizar datos        
 def update(dato):
     try:
-        print(dato)       
+               
         dato.save()
     except Exception as e:
         print("Error: ",e)
@@ -184,30 +184,6 @@ def insertarExposicion(datosExpo):
 # de una exposición y lo inserta en la base de datos
 def insertarRelacion(datosRelacion):
     
-    libEx=comprobarExistencia("libro-expo",datosRelacion["idLibro"],datosRelacion["idExpo"])
-    autorEx=comprobarExistencia("autor-expo",datosRelacion["idAutor"],datosRelacion["idExpo"])
-    
-    print (libEx)
-    print(autorEx)
-    
-        
-    if(libEx and not autorEx):
-        #update libEx  
-        autor=Autor_Exposicion.create(
-            idAutor=datosRelacion["idAutor"],
-            idExp=datosRelacion["idExpo"]
-        )
-        update(autor)
-        print("update libro")
-    elif(not libEx and autorEx):
-        #update autorEx
-        libro=Libro_Exposicion(
-            idLibro=datosRelacion["idLibro"],
-            idExp=datosRelacion["idExpo"]
-        )
-        update(libro)
-        print("update autor")
-    else:
         #insert
         autor=Autor_Exposicion(
             idAutor=datosRelacion["idAutor"],
@@ -216,10 +192,11 @@ def insertarRelacion(datosRelacion):
 
         libro=Libro_Exposicion(
             idLibro=datosRelacion["idLibro"],
-            idAutor=datosRelacion["idExpo"]
+            idExp=datosRelacion["idExpo"]
         )
         
-        print("insert libro y autor")
+        save(autor)
+        save(libro)
 
 #Función para comprobar la existencia de id antes de 
 #insertar un nuevo registro
@@ -247,14 +224,14 @@ def borrarRegistros(id,tipo):
      
     if tipo=="exposicion":
             Exposicion.delete_by_id(id)
-            Autor_Exposicion.delete_by_id(id)
-            Libro_Exposicion.delete_by_id(id)
+            Autor_Exposicion.delete().where(Autor_Exposicion.idExp==id)
+            Libro_Exposicion.delete().where(Libro_Exposicion.idExp==id)
     elif tipo=="autor":
             Autor.delete_by_id(id)
-            Autor_Exposicion.delete_by_id(id)
+            Autor_Exposicion.delete().where(Autor_Exposicion.idAutor==id)
     elif tipo=="libro":
             Libro.delete_by_id(id)
-            Libro_Exposicion.delete_by_id(id)
+            Libro_Exposicion.delete().where(Libro_Exposicion.idLibro==id)
 
 
 #Función que realiza la actualización de registros por tipo
@@ -307,28 +284,29 @@ def updateExposicion(datosExpo):
 #Función que se encarga de buscar registros
 # filtrados por el nombre y el tipo      
 def buscarRegistro(tipo,nombre):
-    switcher={
-        "autor":
-            Autor.select().where(Autor.Nombre.contains(nombre)),
-        "libro":
-             Libro.select().where(Libro.Titulo.contains(nombre)),
-        "exposicion":
-            Exposicion.select().where(Exposicion.nombre.contains(nombre))
-    }.get(tipo)
+    switcher={}
+    if tipo=="autor":
+            switcher=Autor.select().where(Autor.Nombre.contains(nombre))
+    elif tipo=="libro":
+             switcher=Libro.select().where(Libro.Titulo.contains(nombre))
+    elif tipo=="exposicion":
+            switcher=Exposicion.select().where(Exposicion.nombre.contains(nombre))
+    
+    type(switcher)
     return switcher
 
 
 #Función que obtiene todos los datos de la tabla que
 #seleccionemos
 def buscarDatos(tipo):
-    switcher={
-        "autor":
-            Autor.select(),
-        "libro":
-             Libro.select(),
-        "exposicion":
-            Exposicion.select()
-    }.get(tipo)
+    switcher={}
+    if tipo=="autor":
+            switcher=Autor.select()
+    elif tipo=="libro":
+             switcher=Libro.select()
+    elif tipo=="exposicion":
+            switcher=Exposicion.select()
+    
     return switcher
 
 #Función encargada de recoger en un array los datos que
@@ -377,9 +355,14 @@ def mostrarRegistro(tipo,nombre):
             
         return exposiciones 
 
-datosAutor={}
-datosAutor["idAutor"]="3"
-datosAutor["idLibro"]="FF3362036"
-datosAutor["idExpo"]="138"
+def nuevasOrganizaciones():
+    newOrg=Exposicion.select().where(Exposicion.IdExp.not_in(Autor_Exposicion.select(Autor_Exposicion.idExp)))
 
-insertarRelacion(datosAutor)
+    exposiciones=[]
+    for dato in newOrg:
+        exposiciones.append(dato.__dict__())
+        
+    return exposiciones   
+
+    
+
