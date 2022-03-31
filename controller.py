@@ -1,5 +1,6 @@
 from ast import And
 from datetime import date
+from lib2to3.pytree import Base
 import random
 from urllib.request import urlopen
 from paramiko import AutoAddPolicy
@@ -12,21 +13,23 @@ from models.modelos import Autor, Autor_Exposicion, Exposicion, Libro, Libro_Exp
 db = SqliteDatabase("Base de Datos")
 db.connect()
 
-
+#Función para guardar datos en la base de datos
 def save(dato):
     try:        
         dato.save(force_insert=True)
     except Exception as e:
         print("Error: ",e)
-        
+
+#Función para actualizar datos        
 def update(dato):
-    try:      
-        print("hola")  
+    try:
+               
         dato.save()
     except Exception as e:
         print("Error: ",e)
         
-    
+#Función para volcar los datos del json de autores
+# en la base de datos    
 def volcarDatosAutor():
     with open("datosJson/autor.json") as file:
         data = json.load(file)
@@ -41,7 +44,8 @@ def volcarDatosAutor():
             save(objectAuthor)
       
       
-      
+#Función para volcar los datos del json de libros
+# en la base de datos       
 def volcarDatosLibros(): 
     with open("datosJson/libros.json") as file:
         data2 = json.load(file)
@@ -55,7 +59,9 @@ def volcarDatosLibros():
                 Lenguaje=libro["lengua_publicacion"]
             )
             save(objectBook)
-        
+
+#Función para volcar los datos del json de exposiciones
+# en la base de datos         
 def volcarDatosExposiciones():        
 #Abrir url para extraer datos JSON para la tabla exposiciones
     exposicion = urlopen("http://nexo.carm.es/nexo/archivos/recursos/opendata/json/SalasdeExposiciones.json")
@@ -79,7 +85,8 @@ def volcarDatosExposiciones():
             municipio=exposiciones["Municipio"]
         )
         save(exposiciones)
-  
+
+#Genera la asociación aleatoria de libros en exposiciones  
 def volcarDatosLibExp():    
     IdLibros=Libro.select(Libro.IdLibro)
     IdExposicion=Exposicion.select(Exposicion.IdExp)
@@ -98,7 +105,7 @@ def volcarDatosLibExp():
             idExp=exposicion
         )
         save(libro_exposicion)
-
+#Genera la asociación aleatoria de autores en exposiciones 
 def volcarDatosAutExp():
     IdAutor=Autor.select(Autor.Id)
     IdExposicion=Exposicion.select(Exposicion.IdExp)
@@ -118,7 +125,7 @@ def volcarDatosAutExp():
         )
         save(autor_exposicion)
         
-        
+ #Función para insertar registro en función del tipo de registro       
 def insertarRegistro(arrayDatos,tipo):
     
         if tipo=="autor":
@@ -131,7 +138,8 @@ def insertarRegistro(arrayDatos,tipo):
             insertarExposicion(arrayDatos)
             
     
-
+#Función que crea el objeto Autor con los datos recibidos y lo
+#inserta en la base de datos
 def insertarAutor(datosAutor):
     autor=Autor(
         FechaNac=datosAutor["fecha_nac"],
@@ -141,7 +149,8 @@ def insertarAutor(datosAutor):
     
     save(autor)
     
-    
+#Función que crea el objeto Libro con los datos recibidos y lo
+#inserta en la base de datos    
 def insertarLibro(datosLibro):
     if(comprobarExistencia("libro",datosLibro["id"])==0):
         libro=Libro(
@@ -153,7 +162,8 @@ def insertarLibro(datosLibro):
         )
         save(libro)
  
- 
+#Función que crea el objeto Exposición con los datos recibidos y lo
+#inserta en la base de datos 
 def insertarExposicion(datosExpo):
     if(comprobarExistencia("exposicion",datosExpo["id"])==0):
         expo=Exposicion(
@@ -170,65 +180,76 @@ def insertarExposicion(datosExpo):
     else:
         print("Ya existe la Exposicion")
     
-
+#Función que con los datos recibidos inserta la organización
+# de una exposición y lo inserta en la base de datos
 def insertarRelacion(datosRelacion):
     
-    libEx=comprobarExistencia("libro-expo",datosRelacion["idLibro"],datosRelacion["idExpo"])
-    autorEx=comprobarExistencia("autor-expo",datosRelacion["idAutor"],datosRelacion["idExpo"])
-    
-    print (libEx)
-    print(autorEx)
-    
-    if(libEx and autorEx):
-        #updates
-        print("update libro y autor")
-    elif(libEx and not autorEx):
-        #update libEx
-        print("update libro")
-    elif(not libEx and autorEx):
-        #update autorEx
-        print("update autor")
-    else:
         #insert
-        print("insert libro y autor")
+        autor=Autor_Exposicion(
+            idAutor=datosRelacion["idAutor"],
+            idExp=datosRelacion["idExpo"]
+        )
 
-def comprobarExistencia(tipo,id,id2):
-    print(id)
-    print(id2)
-    switcher={
-        "exposicion":
-            Exposicion.select().where(Exposicion.IdExp==id).count(),
-            
-        "autor":
-            Autor.select().where(Autor.Id==id).count(),
-        "libro":
-             Libro.select().where(Libro.IdLibro==id).count(),
-        "libro-expo":
-            Libro_Exposicion.select().where(Libro_Exposicion.idLibro==id and Libro_Exposicion.idExp==id2).count(),
-        "autor-expo":
-            Autor_Exposicion.select().where(Autor_Exposicion.idAutor==id and Autor_Exposicion.idExp==id2).count(),
-    }.get(tipo)
+        libro=Libro_Exposicion(
+            idLibro=datosRelacion["idLibro"],
+            idExp=datosRelacion["idExpo"]
+        )
+        
+        save(autor)
+        save(libro)
+
+#Función para comprobar la existencia de id antes de 
+#insertar un nuevo registro
+def comprobarExistencia(tipo,id,id2=0):
+
+    switcher=0
+    if tipo=="exposicion":
+            switcher=Exposicion.select().where(Exposicion.IdExp==id).count()
+    elif tipo=="autor":
+            switcher=Autor.select().where(Autor.Id==id).count()
+    elif tipo=="libro":
+             switcher=Libro.select().where(Libro.IdLibro==id).count()
+    #elif tipo=="libro-expo":
+    #         switcher=Libro_Exposicion.select().where((Libro_Exposicion.idLibro==id) & (Libro_Exposicion.idExp==id2)).count()
+    #elif tipo=="autor-expo":
+    #       switcher=Autor_Exposicion.select().where((Autor_Exposicion.idAutor==id) & (Autor_Exposicion.idExp==id2)).count()
+
     
     return switcher          
 
-"""datosRelacion={"idLibro":"duyjvhj","idAutor":"1","idExpo":"138"}
-insertarRelacion(datosRelacion)"""
 
-#Borrar datos
+
+#Función que realiza el borrado de registros
 def borrarRegistros(id,tipo):
      
     if tipo=="exposicion":
             Exposicion.delete_by_id(id)
-            print(Autor_Exposicion.select(Autor_Exposicion.idExp).where(Autor_Exposicion.idExp==id))
+            Autor_Exposicion.delete().where(Autor_Exposicion.idExp==id)
+            Libro_Exposicion.delete().where(Libro_Exposicion.idExp==id)
     elif tipo=="autor":
+            exposicionRelacionada=Autor_Exposicion.select(Autor_Exposicion.idExp).where(Autor_Exposicion.idAutor==id)
+            
+            for expo in exposicionRelacionada:
+              resultado=expo.idExp
+              Libro_Exposicion.delete().where(Libro_Exposicion.idExp==resultado).execute()
+              
             Autor.delete_by_id(id)
-            Autor_Exposicion.delete_by_id(id)
+            Autor_Exposicion.delete().where(Autor_Exposicion.idAutor==id)
+            
     elif tipo=="libro":
+            exposicionRelacionada=Libro_Exposicion.select(Libro_Exposicion.idExp).where(Libro_Exposicion.idLibro==id)
+
+            for expo in exposicionRelacionada:
+              resultado=expo.idExp
+              Autor_Exposicion.delete().where(Autor_Exposicion.idExp==resultado).execute()
+
             Libro.delete_by_id(id)
-            Libro_Exposicion.delete_by_id(id)
+            Libro_Exposicion.delete().where(Libro_Exposicion.idLibro==id)
+           
+            
 
 
-
+#Función que realiza la actualización de registros por tipo
 def actualizaRegistro(arrayDatos,tipo):
     
     if(tipo=="autor"):
@@ -237,21 +258,10 @@ def actualizaRegistro(arrayDatos,tipo):
         updateLibro(arrayDatos)
     elif(tipo=="exposicion"):
         updateExposicion(arrayDatos)
-    # switcher={
-    #     "autor":
-    #         #updateAutor(arrayDatos)
-    #        updateAutor(arrayDatos)
-    #         ,
-    #     "libro":
-    #         #updateLibro(arrayDatos)
-    #         updateLibro(arrayDatos)
-    #         ,
-    #     "exposicion":
-    #         updateExposicion(arrayDatos)
-            
-    # }.get(tipo)
+   
     
-
+#Función que hace un update del objeto Autor con los datos recibidos y lo
+#inserta en la base de datos
 def updateAutor(datosAutor):
     autor=Autor(
         Id=datosAutor["id"],
@@ -261,7 +271,8 @@ def updateAutor(datosAutor):
     )
     update(autor)
     
-    
+#Función que hace un update del objeto Libro con los datos recibidos y lo
+#inserta en la base de datos    
 def updateLibro(datosLibro):
         libro=Libro(
             IdLibro=datosLibro["isbn"],
@@ -270,7 +281,9 @@ def updateLibro(datosLibro):
             Lenguaje=datosLibro["lenguaje"] 
         )
         update(libro)
-        
+
+#Función que hace un update del objeto Exposicion con los datos recibidos y lo
+#inserta en la base de datos        
 def updateExposicion(datosExpo):
     expo=Exposicion(
         IdExp=datosExpo["id"],
@@ -282,33 +295,37 @@ def updateExposicion(datosExpo):
         municipio=datosExpo["municipio"]
     )
     update(expo)
-      
+
+#Función que se encarga de buscar registros
+# filtrados por el nombre y el tipo      
 def buscarRegistro(tipo,nombre):
-    switcher={
-        "autor":
-            Autor.select().where(Autor.Nombre.contains(nombre)),
-        "libro":
-             Libro.select().where(Libro.Titulo.contains(nombre)),
-        "exposicion":
-            Exposicion.select().where(Exposicion.nombre.contains(nombre))
-    }.get(tipo)
+    switcher={}
+    if tipo=="autor":
+            switcher=Autor.select().where(Autor.Nombre.contains(nombre))
+    elif tipo=="libro":
+             switcher=Libro.select().where(Libro.Titulo.contains(nombre))
+    elif tipo=="exposicion":
+            switcher=Exposicion.select().where(Exposicion.nombre.contains(nombre))
+    
+    type(switcher)
     return switcher
 
-#dato=buscarRegistro("autor","Abad")
-#for a in dato:
-#    print(a.Nombre)
 
+#Función que obtiene todos los datos de la tabla que
+#seleccionemos
 def buscarDatos(tipo):
-    switcher={
-        "autor":
-            Autor.select(),
-        "libro":
-             Libro.select(),
-        "exposicion":
-            Exposicion.select()
-    }.get(tipo)
+    switcher={}
+    if tipo=="autor":
+            switcher=Autor.select()
+    elif tipo=="libro":
+             switcher=Libro.select()
+    elif tipo=="exposicion":
+            switcher=Exposicion.select()
+    
     return switcher
 
+#Función encargada de recoger en un array los datos que
+#se van a mostrar en formato JSON del tipo seleccionado
 def mostrarDatos(tipo):
     datos=buscarDatos(tipo)
     if(tipo=="autor"):
@@ -331,6 +348,8 @@ def mostrarDatos(tipo):
             
         return exposiciones  
 
+#Función encargada de recoger en un array los datos que
+#se van a mostrar en formato JSON del tipo seleccionado
 def mostrarRegistro(tipo,nombre):
     datos=buscarRegistro(tipo,nombre)
     if(tipo=="autor"):
@@ -351,5 +370,24 @@ def mostrarRegistro(tipo,nombre):
             
         return exposiciones 
 
-#mostrarDatos("libro")
-mostrarRegistro("autor","Abad")
+def nuevasOrganizaciones():
+    newOrg=Exposicion.select().where((Exposicion.IdExp.not_in(Autor_Exposicion.select(Autor_Exposicion.idExp)))&(Exposicion.IdExp.not_in(Libro_Exposicion.select(Libro_Exposicion.idExp))))
+    
+    exposiciones=[]
+    for dato in newOrg:
+        
+        exposiciones.append(dato.__dict__())
+    
+    return exposiciones   
+
+def llenarBDD():
+    volcarDatosAutor()
+    volcarDatosLibros()
+    volcarDatosExposiciones()
+    volcarDatosAutExp()
+    volcarDatosLibExp()
+
+
+
+
+
