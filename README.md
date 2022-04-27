@@ -1,5 +1,5 @@
 # Niararu
-Practica T-Systems
+Practica de una API con python y flask
 Integrantes:
 Rafa
 RAul
