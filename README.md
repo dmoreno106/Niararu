@@ -1,3 +1,2 @@
 # Niararu
-Practica
-
+Practica de una API con python y flask
